@@ -1,6 +1,18 @@
-# Every Health Tech Challenge
+ <img src="./images/everyhealth-logo.png" alt="Every Health Logo" width="40"/>
 
+# Every Health Tech Challenge
+  
 A log management system for Every Health's digital clinic.
+
+Documents:
+
+- [Design Reflection Document](./DesignReflectionDocument.md) - Design choices, production considerations, and future plans
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm (v8 or higher)
+- SQLite3
 
 ## Setup
 
@@ -10,13 +22,29 @@ A log management system for Every Health's digital clinic.
 npm install
 ```
 
-### 2. Development mode
+### 2. Environment Setup
+
+Create a `.env` file in the root directory:
+
+```bash
+# Server
+PORT=3000
+
+# Database
+DB_PATH=./data/logs.db
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
+RATE_LIMIT_MAX_REQUESTS=100  # 100 requests per window
+```
+
+### 3. Development mode
 
 ```bash
 npm run dev
 ```
 
-### 3. Build and run
+### 4. Build and run
 
 ```bash
 npm run build
@@ -25,50 +53,78 @@ npm start
 
 ## API Endpoints
 
-- `GET /` - Hello World endpoint
+- `POST /logs` - Create a new log entry
+- `GET /logs` - List logs with filtering and pagination
+  - Query params: page, limit, severity, after, source
+- `GET /logs/:id` - Get a specific log entry
+- `GET /logs/stats` - Get log statistics
+  - Query params: after
+
+For detailed API documentation with examples, visit the Swagger UI at:
+```bash
+http://localhost:3000/api-docs
+```
+
+## Development Guidelines
+
+### Code Formatting
+
+The project uses Prettier for code formatting. To format your code:
+
+```bash
+# Format all files
+npm run format
+
+# Check if files are formatted correctly
+npm run format:check
+```
+
+### Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate test coverage
+npm run test:coverage
+```
 
 ## Project Structure
 
 ```bash
 src/
-  ├── controllers/    # Route controllers
-  ├── models/        # Data models
-  ├── routes/        # API routes
-  ├── services/      # Business logic
-  ├── types/         # TypeScript types
-  ├── utils/         # Utility functions
-  └── app.ts         # Application entry point
+  ├── __tests__/           # Test files
+  │   ├── controllers/     # Controller tests
+  │   ├── middleware/      # Middleware tests
+  │   ├── utils/          # Utility tests
+  │   └── log.test.ts     # API integration tests
+  │
+  ├── config/             # Configuration files
+  │   ├── database.ts     # Database configuration
+  │   ├── logger.ts       # Logging configuration
+  │   └── swagger.ts      # API documentation
+  │
+  ├── controllers/        # Route controllers
+  │   └── LogController.ts
+  │
+  ├── middleware/         # Express middleware
+  │   └── validation.ts   # Request validation
+  │
+  ├── models/            # Data models
+  │   └── Log.ts         # Log entity
+  │
+  ├── routes/            # API routes
+  │   └── logRoutes.ts   # Log endpoints
+  │
+  ├── services/          # Business logic
+  │   └── LogService.ts  # Log operations
+  │
+  ├── utils/             # Utility functions
+  │   └── anonymization.ts # Patient ID anonymization
+  │
+  ├── app.ts             # Application entry point
+  └── server.ts          # Server configuration
 ```
-
-## API Documentation
-
-The API documentation is available through Swagger UI. When the server is running, you can access it at:
-
-```bash
-http://localhost:3000/api-docs
-```
-
-The Swagger UI provides:
-
-- Interactive API documentation
-- Detailed endpoint descriptions
-- Request/response schemas
-- Example requests and responses
-- The ability to test endpoints directly from the browser
-
-### Available Endpoints
-
-The API documentation includes all available endpoints with their:
-
-- HTTP methods
-- Required parameters
-- Request body schemas
-- Response schemas
-- Example values
-
-You can test any endpoint directly from the Swagger UI by:
-
-1. Clicking on the endpoint
-2. Clicking "Try it out"
-3. Filling in the required parameters
-4. Clicking "Execute"

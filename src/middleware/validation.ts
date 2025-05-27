@@ -47,19 +47,32 @@ export const validateLogQuery = (
     const { page, limit, severity, after } = req.query;
     const errors: string[] = [];
 
-    if (page && isNaN(parseInt(page as string))) {
-      errors.push("Invalid page number");
+    // Validate page
+    if (page !== undefined) {
+      const pageNum = parseInt(page as string);
+      if (isNaN(pageNum) || pageNum < 1) {
+        errors.push("Page must be a positive number");
+      }
     }
-    if (limit && isNaN(parseInt(limit as string))) {
-      errors.push("Invalid limit value");
+
+    // Validate limit
+    if (limit !== undefined) {
+      const limitNum = parseInt(limit as string);
+      if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+        errors.push("Limit must be a number between 1 and 100");
+      }
     }
-    if (after && isNaN(Date.parse(after as string))) {
-      errors.push("Invalid date format");
+
+    // Validate after date
+    if (after !== undefined) {
+      const date = new Date(after as string);
+      if (isNaN(date.getTime())) {
+        errors.push("Invalid date format for 'after' parameter");
+      }
     }
-    if (
-      severity &&
-      !Object.values(LogSeverity).includes(severity as LogSeverity)
-    ) {
+
+    // Validate severity
+    if (severity !== undefined && !Object.values(LogSeverity).includes(severity as LogSeverity)) {
       errors.push("Invalid severity level");
     }
 

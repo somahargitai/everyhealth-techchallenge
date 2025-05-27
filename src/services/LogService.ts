@@ -12,9 +12,8 @@ type FindAllOptions = {
   after?: Date;
 };
 
-type SeverityCount = {
-  log_severity: LogSeverity;
-  count: string;
+type StatsOptions = {
+  after?: Date;
 };
 
 // Constants
@@ -57,11 +56,33 @@ export class LogService {
     return await this.repository.findOneBy({ id });
   }
 
-  async getStats(): Promise<Record<LogSeverity, number>> {
-    const stats = await this.getSeverityCounts();
-    const result = this.initializeSeverityCounts();
-    this.updateSeverityCounts(result, stats);
-    return result;
+  async getStats(options: StatsOptions): Promise<{ total: number; severityCounts: Record<LogSeverity, number> }> {
+    const { after } = options;
+    const queryBuilder = this.repository.createQueryBuilder(LOG_ALIAS);
+
+    if (after) {
+      queryBuilder.andWhere(`${LOG_ALIAS}.timestamp > :after`, { after });
+    }
+
+    const total = await queryBuilder.getCount();
+
+    // Get counts for each severity level
+    const severityCounts = Object.values(LogSeverity).reduce((acc, severity) => {
+      acc[severity] = 0;
+      return acc;
+    }, {} as Record<LogSeverity, number>);
+
+    const counts = await queryBuilder
+      .select(`${LOG_ALIAS}.severity`, 'severity')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy(`${LOG_ALIAS}.severity`)
+      .getRawMany();
+
+    counts.forEach(({ severity, count }) => {
+      severityCounts[severity as LogSeverity] = parseInt(count);
+    });
+
+    return { total, severityCounts };
   }
 
   private applyFilters(
@@ -81,31 +102,5 @@ export class LogService {
     if (after) {
       queryBuilder.andWhere(`${LOG_ALIAS}.timestamp > :after`, { after });
     }
-  }
-
-  private async getSeverityCounts(): Promise<SeverityCount[]> {
-    return await this.repository
-      .createQueryBuilder(LOG_ALIAS)
-      .select(`${LOG_ALIAS}.severity`)
-      .addSelect("COUNT(*)", "count")
-      .groupBy(`${LOG_ALIAS}.severity`)
-      .getRawMany<SeverityCount>();
-  }
-
-  private initializeSeverityCounts(): Record<LogSeverity, number> {
-    const severities: LogSeverity[] = [LogSeverity.INFO, LogSeverity.WARNING, LogSeverity.ERROR, LogSeverity.CRITICAL];
-    return severities.reduce((acc, severity) => {
-      acc[severity] = 0;
-      return acc;
-    }, {} as Record<LogSeverity, number>);
-  }
-
-  private updateSeverityCounts(
-    result: Record<LogSeverity, number>,
-    stats: SeverityCount[]
-  ): void {
-    stats.forEach((stat) => {
-      result[stat.log_severity] = parseInt(stat.count);
-    });
   }
 }

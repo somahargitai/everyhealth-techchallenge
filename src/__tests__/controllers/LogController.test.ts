@@ -152,11 +152,14 @@ describe('LogController', () => {
 
   describe('getStats', () => {
     it('should get log statistics successfully', async () => {
-      const mockStats: Record<LogSeverity, number> = {
-        info: 5,
-        warning: 3,
-        error: 2,
-        critical: 0
+      const mockStats = {
+        total: 10,
+        severityCounts: {
+          info: 5,
+          warning: 3,
+          error: 2,
+          critical: 0
+        }
       };
 
       mockLogService.getStats.mockResolvedValue(mockStats);

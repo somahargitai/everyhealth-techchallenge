@@ -9,4 +9,9 @@ export const AppDataSource = new DataSource({
   logging: process.env.DB_LOGGING === "true",
   entities: [Log],
   subscribers: [],
+  extra: {
+    // Add SQLite specific options to handle concurrent access
+    busyTimeout: 5000, // Wait up to 5 seconds for the database to be available
+    journalMode: 'WAL', // Use Write-Ahead Logging for better concurrency
+  }
 });

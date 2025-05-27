@@ -89,7 +89,7 @@ describe('Validation Middleware', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
         status: 'error',
         message: 'Invalid query parameters',
-        errors: ['Invalid page number']
+        errors: ['Page must be a positive number']
       }));
     });
 
@@ -121,7 +121,7 @@ describe('Validation Middleware', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
         status: 'error',
         message: 'Invalid query parameters',
-        errors: ['Invalid date format']
+        errors: ["Invalid date format for 'after' parameter"]
       }));
     });
 
@@ -140,9 +140,9 @@ describe('Validation Middleware', () => {
         status: 'error',
         message: 'Invalid query parameters',
         errors: expect.arrayContaining([
-          'Invalid page number',
-          'Invalid severity level',
-          'Invalid date format'
+          'Page must be a positive number',
+          "Invalid date format for 'after' parameter",
+          'Invalid severity level'
         ])
       }));
     });

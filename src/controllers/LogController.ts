@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { LogService } from '../services/LogService';
 import { Log, LogSeverity } from '../models/Log';
 import { logger } from '../config/logger';
+import { validate as isUUID } from 'uuid';
 
 export class LogController {
   private logService: LogService;
@@ -54,7 +55,12 @@ export class LogController {
 
   async getStats(req: Request, res: Response): Promise<void> {
     try {
-      const stats = await this.logService.getStats();
+      const { after } = req.query;
+      const options = {
+        after: after ? new Date(after as string) : undefined
+      };
+
+      const stats = await this.logService.getStats(options);
       res.json(stats);
     } catch (error) {
       logger.error('Failed to fetch stats:', { error });
@@ -66,11 +72,32 @@ export class LogController {
     }
   }
 
-  public async getLogById(req: Request, res: Response): Promise<void> {
+  async getLogById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const log = await this.logService.findById(id);
 
+      // Check if the ID matches UUID format
+      const isUuidFormat = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      
+      if (isUuidFormat) {
+        // If it looks like a UUID, validate it
+        if (!isUUID(id)) {
+          res.status(400).json({
+            status: 'error',
+            message: 'Invalid UUID format'
+          });
+          return;
+        }
+      } else {
+        // If it doesn't look like a UUID, treat it as a non-existent ID
+        res.status(404).json({
+          status: 'error',
+          message: 'Log not found'
+        });
+        return;
+      }
+
+      const log = await this.logService.findById(id);
       if (!log) {
         res.status(404).json({
           status: 'error',
@@ -80,12 +107,12 @@ export class LogController {
       }
 
       res.json(log);
-    } catch (error: any) {
-      logger.error('Failed to fetch log:', { error: error.message });
+    } catch (error) {
+      logger.error('Failed to fetch log:', { error });
       res.status(400).json({
         status: 'error',
         message: 'Failed to fetch log',
-        details: error.message
+        details: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   }

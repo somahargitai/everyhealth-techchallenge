@@ -4,17 +4,20 @@ A log management system for Every Health's digital clinic.
 
 ## Setup
 
-1. Install dependencies:
+### 1. Install dependencies
+
 ```bash
 npm install
 ```
 
-2. Development mode:
+### 2. Development mode
+
 ```bash
 npm run dev
 ```
 
-3. Build and run:
+### 3. Build and run
+
 ```bash
 npm run build
 npm start
@@ -26,7 +29,7 @@ npm start
 
 ## Project Structure
 
-```
+```bash
 src/
   ├── controllers/    # Route controllers
   ├── models/        # Data models
@@ -35,4 +38,4 @@ src/
   ├── types/         # TypeScript types
   ├── utils/         # Utility functions
   └── app.ts         # Application entry point
-``` 
+```

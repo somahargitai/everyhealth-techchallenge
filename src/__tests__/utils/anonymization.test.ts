@@ -32,7 +32,7 @@ describe('Anonymization Utils', () => {
         source: 'test-service',
         severity: 'info',
         message: 'Test message',
-        patient_id: 'test123'
+        patient_id: 'test123',
       };
 
       const anonymized = anonymizeLog(log);
@@ -46,7 +46,7 @@ describe('Anonymization Utils', () => {
         source: 'test-service',
         severity: 'info',
         message: 'Test message',
-        patient_id: 'test123'
+        patient_id: 'test123',
       };
 
       const anonymized = anonymizeLog(log);
@@ -61,11 +61,11 @@ describe('Anonymization Utils', () => {
         timestamp: new Date(),
         source: 'test-service',
         severity: 'info',
-        message: 'Test message'
+        message: 'Test message',
       };
 
       const anonymized = anonymizeLog(log);
       expect(anonymized).toEqual(log);
     });
   });
-}); 
+});

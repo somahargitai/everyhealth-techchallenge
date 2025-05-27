@@ -20,7 +20,7 @@ export class LogController {
       res.status(400).json({
         status: 'error',
         message: 'Failed to create log',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -28,27 +28,27 @@ export class LogController {
   async getLogs(req: Request, res: Response): Promise<void> {
     try {
       const { page = '1', limit = '10', severity, source, after } = req.query;
-      
+
       const options = {
         page: parseInt(page as string),
         limit: parseInt(limit as string),
         severity: severity as LogSeverity,
         source: source as string,
-        after: after ? new Date(after as string) : undefined
+        after: after ? new Date(after as string) : undefined,
       };
 
       const result = await this.logService.findAll(options);
       res.json({
         ...result,
         page: options.page,
-        limit: options.limit
+        limit: options.limit,
       });
     } catch (error) {
       logger.error('Failed to fetch logs:', { error });
       res.status(400).json({
         status: 'error',
         message: 'Failed to fetch logs',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -57,7 +57,7 @@ export class LogController {
     try {
       const { after } = req.query;
       const options = {
-        after: after ? new Date(after as string) : undefined
+        after: after ? new Date(after as string) : undefined,
       };
 
       const stats = await this.logService.getStats(options);
@@ -67,7 +67,7 @@ export class LogController {
       res.status(400).json({
         status: 'error',
         message: 'Failed to fetch stats',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -77,14 +77,16 @@ export class LogController {
       const { id } = req.params;
 
       // Check if the ID matches UUID format
-      const isUuidFormat = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      
+      const isUuidFormat = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        id
+      );
+
       if (isUuidFormat) {
         // If it looks like a UUID, validate it
         if (!isUUID(id)) {
           res.status(400).json({
             status: 'error',
-            message: 'Invalid UUID format'
+            message: 'Invalid UUID format',
           });
           return;
         }
@@ -92,7 +94,7 @@ export class LogController {
         // If it doesn't look like a UUID, treat it as a non-existent ID
         res.status(404).json({
           status: 'error',
-          message: 'Log not found'
+          message: 'Log not found',
         });
         return;
       }
@@ -101,7 +103,7 @@ export class LogController {
       if (!log) {
         res.status(404).json({
           status: 'error',
-          message: 'Log not found'
+          message: 'Log not found',
         });
         return;
       }
@@ -112,8 +114,8 @@ export class LogController {
       res.status(400).json({
         status: 'error',
         message: 'Failed to fetch log',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
-} 
+}

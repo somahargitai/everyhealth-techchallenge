@@ -1,13 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { validate, ValidationError } from "class-validator";
-import { plainToInstance } from "class-transformer";
-import { Log, LogSeverity } from "../models/Log";
+import { Request, Response, NextFunction } from 'express';
+import { validate, ValidationError } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
+import { Log, LogSeverity } from '../models/Log';
 
-export const validateLog = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const validateLog = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const logDto = plainToInstance(Log, req.body);
     const errors = await validate(logDto);
@@ -19,8 +15,8 @@ export const validateLog = async (
       }));
 
       res.status(400).json({
-        status: "error",
-        message: "Validation failed",
+        status: 'error',
+        message: 'Validation failed',
         errors: formattedErrors,
       });
       return;
@@ -30,19 +26,15 @@ export const validateLog = async (
     return next();
   } catch (error) {
     res.status(400).json({
-      status: "error",
-      message: "Validation failed",
-      errors: [{ message: "Invalid request body" }],
+      status: 'error',
+      message: 'Validation failed',
+      errors: [{ message: 'Invalid request body' }],
     });
     return;
   }
 };
 
-export const validateLogQuery = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const validateLogQuery = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { page, limit, severity, after } = req.query;
     const errors: string[] = [];
@@ -51,7 +43,7 @@ export const validateLogQuery = (
     if (page !== undefined) {
       const pageNum = parseInt(page as string);
       if (isNaN(pageNum) || pageNum < 1) {
-        errors.push("Page must be a positive number");
+        errors.push('Page must be a positive number');
       }
     }
 
@@ -59,7 +51,7 @@ export const validateLogQuery = (
     if (limit !== undefined) {
       const limitNum = parseInt(limit as string);
       if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
-        errors.push("Limit must be a number between 1 and 100");
+        errors.push('Limit must be a number between 1 and 100');
       }
     }
 
@@ -73,13 +65,13 @@ export const validateLogQuery = (
 
     // Validate severity
     if (severity !== undefined && !Object.values(LogSeverity).includes(severity as LogSeverity)) {
-      errors.push("Invalid severity level");
+      errors.push('Invalid severity level');
     }
 
     if (errors.length > 0) {
       return res.status(400).json({
-        status: "error",
-        message: "Invalid query parameters",
+        status: 'error',
+        message: 'Invalid query parameters',
         errors,
       });
     }
@@ -87,9 +79,9 @@ export const validateLogQuery = (
     next();
   } catch (error) {
     return res.status(400).json({
-      status: "error",
-      message: "Invalid query parameters",
-      errors: [{ message: "Invalid request query" }],
+      status: 'error',
+      message: 'Invalid query parameters',
+      errors: [{ message: 'Invalid request query' }],
     });
   }
 };

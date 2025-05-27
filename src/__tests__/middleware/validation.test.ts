@@ -10,11 +10,11 @@ describe('Validation Middleware', () => {
   beforeEach(() => {
     mockRequest = {
       body: {},
-      query: {}
+      query: {},
     };
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
     nextFunction = jest.fn();
   });
@@ -25,7 +25,7 @@ describe('Validation Middleware', () => {
         timestamp: new Date().toISOString(),
         source: 'test-service',
         severity: LogSeverity.INFO,
-        message: 'Test log message'
+        message: 'Test log message',
       };
 
       await validateLog(mockRequest as Request, mockResponse as Response, nextFunction);
@@ -39,17 +39,19 @@ describe('Validation Middleware', () => {
         timestamp: 'invalid-date',
         source: '',
         severity: 'invalid-severity',
-        message: ''
+        message: '',
       };
 
       await validateLog(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).not.toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
-        message: 'Validation failed'
-      }));
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Validation failed',
+        })
+      );
     });
   });
 
@@ -68,7 +70,7 @@ describe('Validation Middleware', () => {
         page: '1',
         limit: '10',
         severity: LogSeverity.ERROR,
-        after: new Date().toISOString()
+        after: new Date().toISOString(),
       };
 
       validateLogQuery(mockRequest as Request, mockResponse as Response, nextFunction);
@@ -79,72 +81,80 @@ describe('Validation Middleware', () => {
 
     it('should fail validation for invalid page number', () => {
       mockRequest.query = {
-        page: 'invalid'
+        page: 'invalid',
       };
 
       validateLogQuery(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).not.toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
-        message: 'Invalid query parameters',
-        errors: ['Page must be a positive number']
-      }));
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Invalid query parameters',
+          errors: ['Page must be a positive number'],
+        })
+      );
     });
 
     it('should fail validation for invalid severity level', () => {
       mockRequest.query = {
-        severity: 'invalid-severity'
+        severity: 'invalid-severity',
       };
 
       validateLogQuery(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).not.toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
-        message: 'Invalid query parameters',
-        errors: ['Invalid severity level']
-      }));
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Invalid query parameters',
+          errors: ['Invalid severity level'],
+        })
+      );
     });
 
     it('should fail validation for invalid date format', () => {
       mockRequest.query = {
-        after: 'invalid-date'
+        after: 'invalid-date',
       };
 
       validateLogQuery(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).not.toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
-        message: 'Invalid query parameters',
-        errors: ["Invalid date format for 'after' parameter"]
-      }));
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Invalid query parameters',
+          errors: ["Invalid date format for 'after' parameter"],
+        })
+      );
     });
 
     it('should fail validation for multiple invalid parameters', () => {
       mockRequest.query = {
         page: 'invalid',
         severity: 'invalid-severity',
-        after: 'invalid-date'
+        after: 'invalid-date',
       };
 
       validateLogQuery(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).not.toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
-        message: 'Invalid query parameters',
-        errors: expect.arrayContaining([
-          'Page must be a positive number',
-          "Invalid date format for 'after' parameter",
-          'Invalid severity level'
-        ])
-      }));
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Invalid query parameters',
+          errors: expect.arrayContaining([
+            'Page must be a positive number',
+            "Invalid date format for 'after' parameter",
+            'Invalid severity level',
+          ]),
+        })
+      );
     });
   });
-}); 
+});

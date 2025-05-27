@@ -26,7 +26,7 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    database: AppDataSource.isInitialized ? 'connected' : 'disconnected'
+    database: AppDataSource.isInitialized ? 'connected' : 'disconnected',
   });
 });
 
@@ -54,10 +54,10 @@ if (process.env.NODE_ENV !== 'test') {
         logger.info(`API documentation available at http://localhost:${port}/api-docs`);
       });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Error during database initialization:', { error: error.message });
       process.exit(1);
     });
 }
 
-export { app }; 
+export { app };

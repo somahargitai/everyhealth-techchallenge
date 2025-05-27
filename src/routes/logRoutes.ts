@@ -179,4 +179,4 @@ router.get('/stats', validateLogQuery, logController.getStats.bind(logController
  */
 router.get('/:id', validateLogQuery, logController.getLogById.bind(logController));
 
-export default router; 
+export default router;

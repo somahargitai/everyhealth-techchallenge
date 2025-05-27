@@ -2,10 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 import { IsString, IsEnum, IsOptional, IsObject, IsUUID } from 'class-validator';
 
 export enum LogSeverity {
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
-  CRITICAL = "critical"
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical',
 }
 
 @Entity('logs')
@@ -37,4 +37,4 @@ export class Log {
   @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;
-} 
+}

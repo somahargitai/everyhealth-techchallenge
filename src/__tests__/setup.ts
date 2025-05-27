@@ -14,15 +14,14 @@ declare global {
 // Add custom matchers
 expect.extend({
   toBeValidLog(received) {
-    const hasRequiredFields = 
+    const hasRequiredFields =
       'timestamp' in received &&
       'source' in received &&
       'severity' in received &&
       'message' in received;
 
     return {
-      message: () =>
-        `expected ${received} to be a valid log object with required fields`,
+      message: () => `expected ${received} to be a valid log object with required fields`,
       pass: hasRequiredFields,
     };
   },
@@ -32,7 +31,7 @@ expect.extend({
 beforeAll(async () => {
   // Initialize the database connection
   await AppDataSource.initialize();
-  
+
   // Ensure database is synchronized
   await AppDataSource.synchronize(true);
 });
@@ -41,4 +40,4 @@ beforeAll(async () => {
 afterAll(async () => {
   // Close the database connection
   await AppDataSource.destroy();
-}); 
+});

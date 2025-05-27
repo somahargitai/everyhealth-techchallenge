@@ -23,45 +23,45 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               format: 'uuid',
               description: 'Unique identifier for the log entry (auto-generated)',
-              readOnly: true
+              readOnly: true,
             },
             timestamp: {
               type: 'string',
               format: 'date-time',
               description: 'When the log was created (auto-generated)',
-              readOnly: true
+              readOnly: true,
             },
             source: {
               type: 'string',
               description: 'Service or component that created the log',
-              example: 'test-service'
+              example: 'test-service',
             },
             severity: {
               type: 'string',
               enum: ['info', 'warning', 'error', 'critical'],
               description: 'Severity level of the log',
-              example: 'info'
+              example: 'info',
             },
             message: {
               type: 'string',
               description: 'Log message',
-              example: 'Test log message'
+              example: 'Test log message',
             },
             patient_id: {
               type: 'string',
               format: 'uuid',
               description: 'Patient identifier (must be a valid UUID)',
               example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-              nullable: true
+              nullable: true,
             },
             metadata: {
               type: 'object',
               description: 'Additional log metadata',
               additionalProperties: true,
               example: {
-                additionalProp1: {}
+                additionalProp1: {},
               },
-              nullable: true
+              nullable: true,
             },
           },
           required: ['source', 'severity', 'message'],
@@ -71,20 +71,20 @@ const options: swaggerJsdoc.Options = {
             message: 'Test log message',
             patient_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
             metadata: {
-              additionalProp1: {}
-            }
-          }
+              additionalProp1: {},
+            },
+          },
         },
         Error: {
           type: 'object',
           properties: {
             status: {
               type: 'string',
-              example: 'error'
+              example: 'error',
             },
             message: {
               type: 'string',
-              example: 'Validation failed'
+              example: 'Validation failed',
             },
             errors: {
               type: 'array',
@@ -93,26 +93,26 @@ const options: swaggerJsdoc.Options = {
                 properties: {
                   property: {
                     type: 'string',
-                    example: 'patient_id'
+                    example: 'patient_id',
                   },
                   constraints: {
                     type: 'object',
                     properties: {
                       isUuid: {
                         type: 'string',
-                        example: 'patient_id must be a UUID'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                        example: 'patient_id must be a UUID',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   apis: ['./src/routes/*.ts'],
 };
 
-export const swaggerSpec = swaggerJsdoc(options); 
+export const swaggerSpec = swaggerJsdoc(options);

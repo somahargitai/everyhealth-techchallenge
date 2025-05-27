@@ -1,7 +1,7 @@
-import { Repository } from "typeorm";
-import { AppDataSource } from "../config/database";
-import { Log, LogSeverity } from "../models/Log";
-import { anonymizeLog } from "../utils/anonymization";
+import { Repository } from 'typeorm';
+import { AppDataSource } from '../config/database';
+import { Log, LogSeverity } from '../models/Log';
+import { anonymizeLog } from '../utils/anonymization';
 
 // Types
 type FindAllOptions = {
@@ -19,7 +19,7 @@ type StatsOptions = {
 // Constants
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 10;
-const LOG_ALIAS = "log";
+const LOG_ALIAS = 'log';
 
 export class LogService {
   private repository: Repository<Log>;
@@ -46,7 +46,7 @@ export class LogService {
     const [logs, total] = await queryBuilder
       .skip(skip)
       .take(limit)
-      .orderBy(`${LOG_ALIAS}.timestamp`, "DESC")
+      .orderBy(`${LOG_ALIAS}.timestamp`, 'DESC')
       .getManyAndCount();
 
     return { logs, total };
@@ -56,7 +56,9 @@ export class LogService {
     return await this.repository.findOneBy({ id });
   }
 
-  async getStats(options: StatsOptions): Promise<{ total: number; severityCounts: Record<LogSeverity, number> }> {
+  async getStats(
+    options: StatsOptions
+  ): Promise<{ total: number; severityCounts: Record<LogSeverity, number> }> {
     const { after } = options;
     const queryBuilder = this.repository.createQueryBuilder(LOG_ALIAS);
 
@@ -67,10 +69,13 @@ export class LogService {
     const total = await queryBuilder.getCount();
 
     // Get counts for each severity level
-    const severityCounts = Object.values(LogSeverity).reduce((acc, severity) => {
-      acc[severity] = 0;
-      return acc;
-    }, {} as Record<LogSeverity, number>);
+    const severityCounts = Object.values(LogSeverity).reduce(
+      (acc, severity) => {
+        acc[severity] = 0;
+        return acc;
+      },
+      {} as Record<LogSeverity, number>
+    );
 
     const counts = await queryBuilder
       .select(`${LOG_ALIAS}.severity`, 'severity')

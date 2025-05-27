@@ -1,12 +1,12 @@
-import winston from "winston";
-import morgan from "morgan";
+import winston from 'winston';
+import morgan from 'morgan';
 
 // Create Winston logger
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: winston.format.combine(
     winston.format.timestamp({
-      format: "YYYY-MM-DD HH:mm:ss.SSS",
+      format: 'YYYY-MM-DD HH:mm:ss.SSS',
     }),
     winston.format.json()
   ),
@@ -16,7 +16,7 @@ const logger = winston.createLogger({
         winston.format.colorize(),
         winston.format.printf(({ timestamp, level, message, ...meta }) => {
           return ` [${level}]: ${message} ${
-            Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ""
+            Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
           } ${timestamp}`;
         })
       ),
@@ -28,25 +28,24 @@ const logger = winston.createLogger({
 const morganStream = {
   write: (message: string) => {
     // Only log if not in test environment
-    if (process.env.NODE_ENV !== "test") {
+    if (process.env.NODE_ENV !== 'test') {
       logger.info(message.trim());
     }
   },
 };
 
 // Create Morgan middleware with custom format
-morgan.token("status-emoji", (req, res) => {
+morgan.token('status-emoji', (req, res) => {
   const status = res.statusCode;
-  if (status >= 500) return "❌ ";
-  if (status >= 400) return "⚠️ ";
-  if (status >= 300) return "↪️ ";
-  if (status >= 200) return "✅";
-  return "❓ ";
+  if (status >= 500) return '❌ ';
+  if (status >= 400) return '⚠️ ';
+  if (status >= 300) return '↪️ ';
+  if (status >= 200) return '✅';
+  return '❓ ';
 });
 
-const morganMiddleware = morgan(
-  ":method :status-emoji :status - :url - :response-time ms",
-  { stream: morganStream }
-);
+const morganMiddleware = morgan(':method :status-emoji :status - :url - :response-time ms', {
+  stream: morganStream,
+});
 
 export { logger, morganMiddleware };

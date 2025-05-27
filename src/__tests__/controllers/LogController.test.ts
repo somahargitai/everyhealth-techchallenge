@@ -18,11 +18,11 @@ describe('LogController', () => {
     (logController as any).logService = mockLogService;
 
     mockRequest = {
-      query: {}
+      query: {},
     };
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
   });
 
@@ -34,7 +34,7 @@ describe('LogController', () => {
         source: 'test-service',
         severity: 'info' as LogSeverity,
         message: 'Test log message',
-        patient_id: '123'
+        patient_id: '123',
       };
 
       mockRequest.body = {
@@ -42,7 +42,7 @@ describe('LogController', () => {
         source: mockLog.source,
         severity: mockLog.severity,
         message: mockLog.message,
-        patient_id: mockLog.patient_id
+        patient_id: mockLog.patient_id,
       };
 
       mockLogService.create.mockResolvedValue(mockLog);
@@ -64,7 +64,7 @@ describe('LogController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         status: 'error',
         message: 'Failed to create log',
-        details: 'Database error'
+        details: 'Database error',
       });
     });
   });
@@ -72,15 +72,17 @@ describe('LogController', () => {
   describe('getLogs', () => {
     it('should get logs without filters', async () => {
       const mockLogs = {
-        logs: [{
-          id: '1',
-          timestamp: new Date(),
-          source: 'test-service',
-          severity: 'info' as LogSeverity,
-          message: 'Test log message',
-          patient_id: '123'
-        }],
-        total: 1
+        logs: [
+          {
+            id: '1',
+            timestamp: new Date(),
+            source: 'test-service',
+            severity: 'info' as LogSeverity,
+            message: 'Test log message',
+            patient_id: '123',
+          },
+        ],
+        total: 1,
       };
 
       mockLogService.findAll.mockResolvedValue(mockLogs);
@@ -89,33 +91,35 @@ describe('LogController', () => {
 
       expect(mockLogService.findAll).toHaveBeenCalledWith({
         page: 1,
-        limit: 10
+        limit: 10,
       });
       expect(mockResponse.json).toHaveBeenCalledWith({
         ...mockLogs,
         page: 1,
-        limit: 10
+        limit: 10,
       });
     });
 
     it('should get logs with filters', async () => {
       const mockLogs = {
-        logs: [{
-          id: '1',
-          timestamp: new Date(),
-          source: 'test-service',
-          severity: 'error' as LogSeverity,
-          message: 'Test error message',
-          patient_id: '123'
-        }],
-        total: 1
+        logs: [
+          {
+            id: '1',
+            timestamp: new Date(),
+            source: 'test-service',
+            severity: 'error' as LogSeverity,
+            message: 'Test error message',
+            patient_id: '123',
+          },
+        ],
+        total: 1,
       };
 
       mockRequest.query = {
         severity: 'error',
         after: new Date().toISOString(),
         page: '1',
-        limit: '10'
+        limit: '10',
       };
 
       mockLogService.findAll.mockResolvedValue(mockLogs);
@@ -126,12 +130,12 @@ describe('LogController', () => {
         severity: 'error',
         after: expect.any(Date),
         page: 1,
-        limit: 10
+        limit: 10,
       });
       expect(mockResponse.json).toHaveBeenCalledWith({
         ...mockLogs,
         page: 1,
-        limit: 10
+        limit: 10,
       });
     });
 
@@ -145,7 +149,7 @@ describe('LogController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         status: 'error',
         message: 'Failed to fetch logs',
-        details: 'Database error'
+        details: 'Database error',
       });
     });
   });
@@ -158,8 +162,8 @@ describe('LogController', () => {
           info: 5,
           warning: 3,
           error: 2,
-          critical: 0
-        }
+          critical: 0,
+        },
       };
 
       mockLogService.getStats.mockResolvedValue(mockStats);
@@ -180,8 +184,8 @@ describe('LogController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         status: 'error',
         message: 'Failed to fetch stats',
-        details: 'Database error'
+        details: 'Database error',
       });
     });
   });
-}); 
+});

@@ -7,11 +7,11 @@ import { createHash } from 'crypto';
  */
 export function anonymizePatientId(patientId: string): string {
   if (!patientId) return '';
-  
+
   // Using SHA-256 for a secure one-way hash
   const hash = createHash('sha256');
   hash.update(patientId);
-  
+
   // Return first 16 characters of the hash for readability
   // while maintaining uniqueness
   return `anon_${hash.digest('hex').substring(0, 16)}`;
@@ -22,12 +22,12 @@ export function anonymizePatientId(patientId: string): string {
  */
 export function anonymizeLog(log: Record<string, any>): Record<string, any> {
   const anonymizedLog = { ...log };
-  
+
   if (anonymizedLog.patient_id) {
     anonymizedLog.patient_id = anonymizePatientId(anonymizedLog.patient_id);
   }
-  
+
   // Add more sensitive fields here as needed
-  
+
   return anonymizedLog;
-} 
+}

@@ -32,10 +32,10 @@ PORT=3000
 
 # Database
 DB_PATH=./data/logs.db
+DB_LOGGING=false
 
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
-RATE_LIMIT_MAX_REQUESTS=100  # 100 requests per window
+# Environment
+NODE_ENV=development  # development, test, or production
 ```
 
 ### 3. Development mode

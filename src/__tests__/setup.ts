@@ -1,5 +1,6 @@
 import { Express } from 'express';
 import request from 'supertest';
+import { AppDataSource } from '../config/database';
 
 // Extend the global Jest namespace
 declare global {
@@ -25,4 +26,19 @@ expect.extend({
       pass: hasRequiredFields,
     };
   },
+});
+
+// Setup before all tests
+beforeAll(async () => {
+  // Initialize the database connection
+  await AppDataSource.initialize();
+  
+  // Ensure database is synchronized
+  await AppDataSource.synchronize(true);
+});
+
+// Cleanup after all tests
+afterAll(async () => {
+  // Close the database connection
+  await AppDataSource.destroy();
 }); 

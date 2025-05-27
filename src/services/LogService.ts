@@ -90,7 +90,7 @@ export class LogService {
   }
 
   private initializeSeverityCounts(): Record<LogSeverity, number> {
-    const severities: LogSeverity[] = ["info", "warning", "error", "critical"];
+    const severities: LogSeverity[] = [LogSeverity.INFO, LogSeverity.WARNING, LogSeverity.ERROR, LogSeverity.CRITICAL];
     return severities.reduce((acc, severity) => {
       acc[severity] = 0;
       return acc;

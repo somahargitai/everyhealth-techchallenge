@@ -1,7 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 import { IsString, IsEnum, IsOptional, IsObject, IsUUID } from 'class-validator';
 
-export type LogSeverity = "info" | "warning" | "error" | "critical";
+export enum LogSeverity {
+  INFO = "info",
+  WARNING = "warning",
+  ERROR = "error",
+  CRITICAL = "critical"
+}
 
 @Entity('logs')
 export class Log {
@@ -16,7 +21,7 @@ export class Log {
   source!: string;
 
   @Column()
-  @IsString()
+  @IsEnum(LogSeverity)
   severity!: LogSeverity;
 
   @Column('text')

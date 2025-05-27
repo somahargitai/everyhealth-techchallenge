@@ -37,17 +37,19 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
 
-// Initialize database and start server
-AppDataSource.initialize()
-  .then(() => {
-    logger.info('Database connection initialized');
-    app.listen(port, () => {
-      logger.info(`Server is running on port ${port}`);
+// Initialize database and start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  AppDataSource.initialize()
+    .then(() => {
+      logger.info('Database connection initialized');
+      app.listen(port, () => {
+        logger.info(`Server is running on port ${port}`);
+      });
+    })
+    .catch((error) => {
+      logger.error('Error during database initialization:', { error: error.message });
+      process.exit(1);
     });
-  })
-  .catch((error) => {
-    logger.error('Error during database initialization:', { error: error.message });
-    process.exit(1);
-  });
+}
 
 export { app }; 

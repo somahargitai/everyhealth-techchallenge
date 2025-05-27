@@ -10,6 +10,7 @@ type FindAllOptions = {
   severity?: LogSeverity;
   source?: string;
   after?: Date;
+  before?: Date;
 };
 
 type StatsOptions = {
@@ -35,19 +36,38 @@ export class LogService {
     return await this.repository.save(log);
   }
 
-  async findAll(options: FindAllOptions): Promise<{ logs: Log[]; total: number }> {
-    const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, severity, source, after } = options;
-    const skip = (page - 1) * limit;
+  async findAll(options: FindAllOptions = {}): Promise<{ logs: Log[]; total: number }> {
+    const {
+      page = DEFAULT_PAGE,
+      limit = DEFAULT_LIMIT,
+      severity,
+      source,
+      after,
+      before,
+    } = options;
 
-    const queryBuilder = this.repository.createQueryBuilder(LOG_ALIAS);
+    const queryBuilder = this.repository
+      .createQueryBuilder(LOG_ALIAS)
+      .skip((page - 1) * limit)
+      .take(limit);
 
-    this.applyFilters(queryBuilder, { severity, source, after });
+    if (severity) {
+      queryBuilder.andWhere(`${LOG_ALIAS}.severity = :severity`, { severity });
+    }
 
-    const [logs, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .orderBy(`${LOG_ALIAS}.timestamp`, 'DESC')
-      .getManyAndCount();
+    if (source) {
+      queryBuilder.andWhere(`${LOG_ALIAS}.source = :source`, { source });
+    }
+
+    if (after) {
+      queryBuilder.andWhere(`${LOG_ALIAS}.timestamp >= :after`, { after });
+    }
+
+    if (before) {
+      queryBuilder.andWhere(`${LOG_ALIAS}.timestamp <= :before`, { before });
+    }
+
+    const [logs, total] = await queryBuilder.getManyAndCount();
 
     return { logs, total };
   }

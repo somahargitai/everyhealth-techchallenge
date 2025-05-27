@@ -65,6 +65,12 @@ router.post('/', validateLog, logController.createLog.bind(logController));
  *           format: date-time
  *         description: Filter logs created after this timestamp
  *       - in: query
+ *         name: before
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Filter logs created before this timestamp
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer

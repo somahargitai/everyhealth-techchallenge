@@ -138,8 +138,52 @@ describe('Log Endpoints', () => {
       expect(response.body.logs.every((log: any) => new Date(log.timestamp) > after)).toBe(true);
     });
 
+    it('should filter logs by before timestamp', async () => {
+      const before = new Date(Date.now() - 900000); // 15 minutes ago
+      const response = await request(app)
+        .get('/logs')
+        .query({ before: before.toISOString() })
+        .expect(200);
+
+      expect(response.body.logs.every((log: any) => new Date(log.timestamp) < before)).toBe(true);
+    });
+
     it('should handle invalid after timestamp', async () => {
       await request(app).get('/logs').query({ after: 'invalid-date' }).expect(400);
+    });
+
+    it('should handle invalid before timestamp', async () => {
+      await request(app).get('/logs').query({ before: 'invalid-date' }).expect(400);
+    });
+
+    it('should handle after date being later than before date', async () => {
+      const after = new Date(Date.now() - 900000); // 15 minutes ago
+      const before = new Date(Date.now() - 1800000); // 30 minutes ago
+
+      await request(app)
+        .get('/logs')
+        .query({ after: after.toISOString(), before: before.toISOString() })
+        .expect(400);
+    });
+
+    it('should handle multiple filters including before', async () => {
+      const before = new Date(Date.now() - 900000); // 15 minutes ago
+      const response = await request(app)
+        .get('/logs')
+        .query({
+          source: 'test-service',
+          severity: LogSeverity.INFO,
+          before: before.toISOString(),
+          page: 1,
+          limit: 10,
+        })
+        .expect(200);
+
+      expect(response.body.logs.every((log: any) => 
+        log.source === 'test-service' &&
+        log.severity === LogSeverity.INFO &&
+        new Date(log.timestamp) < before
+      )).toBe(true);
     });
 
     it('should handle invalid page number', async () => {

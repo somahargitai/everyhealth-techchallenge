@@ -36,14 +36,14 @@ export const validateLog = async (req: Request, res: Response, next: NextFunctio
 
 export const validateLogQuery = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { page, limit, severity, after } = req.query;
+    const { page, limit, severity, after, before } = req.query;
     const errors: string[] = [];
 
     // Validate page
     if (page !== undefined) {
       const pageNum = parseInt(page as string);
       if (isNaN(pageNum) || pageNum < 1) {
-        errors.push('Page must be a positive number');
+        errors.push("Page must be a positive number");
       }
     }
 
@@ -51,7 +51,7 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
     if (limit !== undefined) {
       const limitNum = parseInt(limit as string);
       if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
-        errors.push('Limit must be a number between 1 and 100');
+        errors.push("Limit must be a number between 1 and 100");
       }
     }
 
@@ -63,15 +63,32 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
       }
     }
 
+    // Validate before date
+    if (before !== undefined) {
+      const date = new Date(before as string);
+      if (isNaN(date.getTime())) {
+        errors.push("Invalid date format for 'before' parameter");
+      }
+    }
+
+    // Validate date range
+    if (after !== undefined && before !== undefined) {
+      const afterDate = new Date(after as string);
+      const beforeDate = new Date(before as string);
+      if (afterDate > beforeDate) {
+        errors.push("'after' date must be before 'before' date");
+      }
+    }
+
     // Validate severity
     if (severity !== undefined && !Object.values(LogSeverity).includes(severity as LogSeverity)) {
-      errors.push('Invalid severity level');
+      errors.push("Invalid severity level");
     }
 
     if (errors.length > 0) {
       return res.status(400).json({
-        status: 'error',
-        message: 'Invalid query parameters',
+        status: "error",
+        message: "Invalid query parameters",
         errors,
       });
     }
@@ -79,9 +96,9 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
     next();
   } catch (error) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Invalid query parameters',
-      errors: [{ message: 'Invalid request query' }],
+      status: "error",
+      message: "Invalid query parameters",
+      errors: [{ message: "Invalid request query" }],
     });
   }
 };

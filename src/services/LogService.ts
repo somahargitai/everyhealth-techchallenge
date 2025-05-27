@@ -37,14 +37,7 @@ export class LogService {
   }
 
   async findAll(options: FindAllOptions = {}): Promise<{ logs: Log[]; total: number }> {
-    const {
-      page = DEFAULT_PAGE,
-      limit = DEFAULT_LIMIT,
-      severity,
-      source,
-      after,
-      before,
-    } = options;
+    const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, severity, source, after, before } = options;
 
     const queryBuilder = this.repository
       .createQueryBuilder(LOG_ALIAS)

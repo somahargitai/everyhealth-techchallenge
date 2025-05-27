@@ -179,11 +179,14 @@ describe('Log Endpoints', () => {
         })
         .expect(200);
 
-      expect(response.body.logs.every((log: any) => 
-        log.source === 'test-service' &&
-        log.severity === LogSeverity.INFO &&
-        new Date(log.timestamp) < before
-      )).toBe(true);
+      expect(
+        response.body.logs.every(
+          (log: any) =>
+            log.source === 'test-service' &&
+            log.severity === LogSeverity.INFO &&
+            new Date(log.timestamp) < before
+        )
+      ).toBe(true);
     });
 
     it('should handle invalid page number', async () => {

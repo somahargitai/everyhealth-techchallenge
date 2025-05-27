@@ -43,7 +43,7 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
     if (page !== undefined) {
       const pageNum = parseInt(page as string);
       if (isNaN(pageNum) || pageNum < 1) {
-        errors.push("Page must be a positive number");
+        errors.push('Page must be a positive number');
       }
     }
 
@@ -51,7 +51,7 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
     if (limit !== undefined) {
       const limitNum = parseInt(limit as string);
       if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
-        errors.push("Limit must be a number between 1 and 100");
+        errors.push('Limit must be a number between 1 and 100');
       }
     }
 
@@ -82,13 +82,13 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
 
     // Validate severity
     if (severity !== undefined && !Object.values(LogSeverity).includes(severity as LogSeverity)) {
-      errors.push("Invalid severity level");
+      errors.push('Invalid severity level');
     }
 
     if (errors.length > 0) {
       return res.status(400).json({
-        status: "error",
-        message: "Invalid query parameters",
+        status: 'error',
+        message: 'Invalid query parameters',
         errors,
       });
     }
@@ -96,9 +96,9 @@ export const validateLogQuery = (req: Request, res: Response, next: NextFunction
     next();
   } catch (error) {
     return res.status(400).json({
-      status: "error",
-      message: "Invalid query parameters",
-      errors: [{ message: "Invalid request query" }],
+      status: 'error',
+      message: 'Invalid query parameters',
+      errors: [{ message: 'Invalid request query' }],
     });
   }
 };

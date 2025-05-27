@@ -28,28 +28,28 @@ export class LogController {
   async getLogs(req: Request, res: Response): Promise<void> {
     try {
       const { page = '1', limit = '10', severity, source, after, before } = req.query;
-      
+
       const options = {
         page: parseInt(page as string),
         limit: parseInt(limit as string),
         severity: severity as LogSeverity,
         source: source as string,
         after: after ? new Date(after as string) : undefined,
-        before: before ? new Date(before as string) : undefined
+        before: before ? new Date(before as string) : undefined,
       };
 
       const result = await this.logService.findAll(options);
       res.json({
         ...result,
         page: options.page,
-        limit: options.limit
+        limit: options.limit,
       });
     } catch (error) {
       logger.error('Failed to fetch logs:', { error });
       res.status(400).json({
         status: 'error',
         message: 'Failed to fetch logs',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }

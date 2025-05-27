@@ -27,7 +27,10 @@ const logger = winston.createLogger({
 // Create Morgan stream
 const morganStream = {
   write: (message: string) => {
-    logger.info(message.trim());
+    // Only log if not in test environment
+    if (process.env.NODE_ENV !== "test") {
+      logger.info(message.trim());
+    }
   },
 };
 

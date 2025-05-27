@@ -1,6 +1,7 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../config/database";
 import { Log, LogSeverity } from "../models/Log";
+import { anonymizeLog } from "../utils/anonymization";
 
 // Types
 type FindAllOptions = {
@@ -29,7 +30,9 @@ export class LogService {
   }
 
   async create(logData: Partial<Log>): Promise<Log> {
-    const log = this.repository.create(logData);
+    // Anonymize sensitive data before saving
+    const anonymizedData = anonymizeLog(logData);
+    const log = this.repository.create(anonymizedData);
     return await this.repository.save(log);
   }
 

@@ -1,13 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import { IsString, IsEnum, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsObject, IsUUID } from 'class-validator';
 
-export enum LogSeverity {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  CRITICAL = 'critical'
-}
+export type LogSeverity = "info" | "warning" | "error" | "critical";
 
 @Entity('logs')
 export class Log {
@@ -21,12 +15,8 @@ export class Log {
   @IsString()
   source!: string;
 
-  @Column({
-    type: 'enum',
-    enum: LogSeverity,
-    default: LogSeverity.INFO
-  })
-  @IsEnum(LogSeverity)
+  @Column()
+  @IsString()
   severity!: LogSeverity;
 
   @Column('text')
@@ -34,9 +24,9 @@ export class Log {
   message!: string;
 
   @Column({ nullable: true })
-  @IsString()
   @IsOptional()
-  patientId?: string;
+  @IsUUID()
+  patient_id?: string;
 
   @Column('simple-json', { nullable: true })
   @IsObject()

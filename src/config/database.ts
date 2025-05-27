@@ -8,6 +8,5 @@ export const AppDataSource = new DataSource({
   synchronize: process.env.DB_SYNCHRONIZE === "true",
   logging: process.env.DB_LOGGING === "true",
   entities: [Log],
-  migrations: [],
   subscribers: [],
 });

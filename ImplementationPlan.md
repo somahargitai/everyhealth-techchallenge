@@ -30,7 +30,6 @@
   - severity
   - message
   - patient_id (to be anonymized)
-- Implement database migrations
 - Create database service layer
 
 ## 3. API Implementation (2-3 hours)

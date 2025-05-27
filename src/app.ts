@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { AppDataSource } from './config/database';
 import { logger, morganMiddleware } from './config/logger';
+import logRoutes from './routes/logRoutes';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,14 +11,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(morganMiddleware);
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error('Unhandled error:', { error: err.message, stack: err.stack });
-  res.status(500).json({
-    status: 'error',
-    message: 'Internal server error'
-  });
-});
+// Routes
+app.use('/logs', logRoutes);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -25,6 +20,15 @@ app.get('/health', (req: Request, res: Response) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     database: AppDataSource.isInitialized ? 'connected' : 'disconnected'
+  });
+});
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  logger.error('Unhandled error:', { error: err.message, stack: err.stack });
+  res.status(500).json({
+    status: 'error',
+    message: 'Internal server error'
   });
 });
 

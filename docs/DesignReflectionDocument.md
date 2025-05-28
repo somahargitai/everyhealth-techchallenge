@@ -12,8 +12,9 @@
     - By Decorators and OOP it is easy to learn for developers with Java background
     - Entity structures are safe and standardized
   - Cons:
-    - more opinionated and a bit harder to read. Sequelize may be considered as alternateive
+    - TypeORM is more opinionated and a bit harder to read. Sequelize may be considered as alternateive
     - Not optimal for high-concurrency production use, Prisma may be considered as alternative
+    - Sqlite fails even on tests with minor concurrency situations. It is good enough and managable for a demonstration like this project, but in production code not acceptable
   - Trade-off: Chosen for simplicity and development speed
 
 ### API Design

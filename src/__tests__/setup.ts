@@ -1,6 +1,8 @@
 import { Express } from 'express';
 import request from 'supertest';
 import { AppDataSource } from '../config/database';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Extend the global Jest namespace
 declare global {
@@ -40,4 +42,16 @@ beforeAll(async () => {
 afterAll(async () => {
   // Close the database connection
   await AppDataSource.destroy();
+
+  // Clean up test database files
+  const testDbFiles = fs.readdirSync(process.cwd())
+    .filter(file => file.startsWith('test-') && file.endsWith('.db'));
+  
+  for (const file of testDbFiles) {
+    try {
+      fs.unlinkSync(path.join(process.cwd(), file));
+    } catch (error) {
+      console.error(`Error deleting test database file ${file}:`, error);
+    }
+  }
 });

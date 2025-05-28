@@ -231,6 +231,71 @@ describe('Log Endpoints', () => {
         )
       ).toBe(true);
     });
+
+    it('should handle pagination with multiple pages', async () => {
+      // Clear the database first to ensure we start with a clean state
+      await AppDataSource.getRepository('logs').clear();
+
+      // Create 50 test logs
+      const totalLogs = 50;
+      const logsPerPage = 10;
+      const targetPage = 5;
+
+      // Generate and insert logs
+      for (let i = 0; i < totalLogs; i++) {
+        const logData = {
+          source: 'pagination-test',
+          severity: LogSeverity.INFO,
+          message: `Test log message ${i + 1}`,
+          timestamp: new Date(Date.now() - i * 60000), // Each log 1 minute apart
+        };
+        await request(app).post('/logs').send(logData);
+      }
+
+      // Test page 5
+      const response = await request(app)
+        .get('/logs')
+        .query({ 
+          page: targetPage, 
+          limit: logsPerPage,
+          source: 'pagination-test' // Add source filter to ensure we only get our test logs
+        })
+        .expect(200);
+
+      // Verify response structure
+      expect(response.body).toHaveProperty('logs');
+      expect(response.body.total).toBe(totalLogs);
+      expect(response.body.page).toBe(targetPage);
+      expect(response.body.limit).toBe(logsPerPage);
+      expect(Array.isArray(response.body.logs)).toBe(true);
+      expect(response.body.logs.length).toBe(logsPerPage);
+
+      // Verify we're getting the correct page of results
+      // Page 5 should contain logs 41-50 (0-based index)
+      const expectedStartIndex = (targetPage - 1) * logsPerPage;
+      const expectedEndIndex = targetPage * logsPerPage;
+
+      response.body.logs.forEach((log: any, index: number) => {
+        const expectedMessageNumber = expectedStartIndex + index + 1;
+        expect(log.message).toBe(`Test log message ${expectedMessageNumber}`);
+        expect(log.source).toBe('pagination-test');
+        expect(log.severity).toBe(LogSeverity.INFO);
+      });
+
+      // Test that we can't access a page beyond the available data
+      const beyondLastPage = Math.ceil(totalLogs / logsPerPage) + 1;
+      const emptyPageResponse = await request(app)
+        .get('/logs')
+        .query({ 
+          page: beyondLastPage, 
+          limit: logsPerPage,
+          source: 'pagination-test' // Add source filter here too
+        })
+        .expect(200);
+
+      expect(emptyPageResponse.body.logs).toHaveLength(0);
+      expect(emptyPageResponse.body.total).toBe(totalLogs);
+    });
   });
 
   describe('GET /logs/:id', () => {

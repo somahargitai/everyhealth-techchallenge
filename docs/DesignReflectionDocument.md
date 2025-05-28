@@ -179,3 +179,8 @@ Production improvements needed:
    - Performance benchmarks
    - Load testing tools
    - Optimization metrics
+
+### Further Reconsiderations for a Real-Life Project
+
+- Tech stack should be replanned based on high scale expectations
+- API architecture should have an overview based on more detailed planning. For example patiend ID is now not mandatory to let the client save extra system logs. In a strict environment it may be undesirable behaviour.

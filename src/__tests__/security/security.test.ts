@@ -17,14 +17,11 @@ describe('Security Tests', () => {
         message: 'Test message',
       };
 
-      const response = await request(app)
-        .post('/logs')
-        .send(maliciousLog)
-        .expect(201);
+      const response = await request(app).post('/logs').send(maliciousLog).expect(201);
 
       // Verify the log was created with the sanitized input
       expect(response.body.source).toBe(maliciousLog.source);
-      
+
       // Verify the table still exists and is accessible
       const logs = await request(app).get('/logs').expect(200);
       expect(Array.isArray(logs.body.logs)).toBe(true);
@@ -61,14 +58,11 @@ describe('Security Tests', () => {
         message: '<script>alert("XSS")</script>',
       };
 
-      const response = await request(app)
-        .post('/logs')
-        .send(maliciousLog)
-        .expect(201);
+      const response = await request(app).post('/logs').send(maliciousLog).expect(201);
 
       // Verify the message was stored as-is (not executed)
       expect(response.body.message).toBe(maliciousLog.message);
-      
+
       // Verify the message is returned as-is in GET response
       const logs = await request(app).get('/logs').expect(200);
       const createdLog = logs.body.logs.find((log: any) => log.message === maliciousLog.message);
@@ -85,14 +79,11 @@ describe('Security Tests', () => {
         },
       };
 
-      const response = await request(app)
-        .post('/logs')
-        .send(maliciousLog)
-        .expect(201);
+      const response = await request(app).post('/logs').send(maliciousLog).expect(201);
 
       // Verify the metadata was stored as-is
       expect(response.body.metadata).toEqual(maliciousLog.metadata);
-      
+
       // Verify the metadata is returned as-is in GET response
       const logs = await request(app).get('/logs').expect(200);
       const createdLog = logs.body.logs.find((log: any) => log.message === maliciousLog.message);

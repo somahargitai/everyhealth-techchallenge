@@ -273,10 +273,10 @@ describe('Log Endpoints', () => {
       // Test page 5
       const response = await request(app)
         .get('/logs')
-        .query({ 
-          page: targetPage, 
+        .query({
+          page: targetPage,
           limit: logsPerPage,
-          source: 'pagination-test' // Add source filter to ensure we only get our test logs
+          source: 'pagination-test', // Add source filter to ensure we only get our test logs
         })
         .expect(200);
 
@@ -304,10 +304,10 @@ describe('Log Endpoints', () => {
       const beyondLastPage = Math.ceil(totalLogs / logsPerPage) + 1;
       const emptyPageResponse = await request(app)
         .get('/logs')
-        .query({ 
-          page: beyondLastPage, 
+        .query({
+          page: beyondLastPage,
           limit: logsPerPage,
-          source: 'pagination-test' // Add source filter here too
+          source: 'pagination-test', // Add source filter here too
         })
         .expect(200);
 

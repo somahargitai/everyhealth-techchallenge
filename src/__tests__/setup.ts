@@ -44,9 +44,10 @@ afterAll(async () => {
   await AppDataSource.destroy();
 
   // Clean up test database files
-  const testDbFiles = fs.readdirSync(process.cwd())
+  const testDbFiles = fs
+    .readdirSync(process.cwd())
     .filter(file => file.startsWith('test-') && file.endsWith('.db'));
-  
+
   for (const file of testDbFiles) {
     try {
       fs.unlinkSync(path.join(process.cwd(), file));

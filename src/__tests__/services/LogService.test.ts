@@ -76,11 +76,13 @@ describe('LogService', () => {
 
       const result = await logService.create(logData);
 
-      expect(mockRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        source: logData.source,
-        severity: logData.severity,
-        message: logData.message,
-      }));
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          source: logData.source,
+          severity: logData.severity,
+          message: logData.message,
+        })
+      );
       expect(mockRepository.save).toHaveBeenCalledWith(createdLog);
       expect(result).toEqual(createdLog);
     });
@@ -104,9 +106,11 @@ describe('LogService', () => {
 
       await logService.create(logData);
 
-      expect(mockRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        patient_id: expect.stringMatching(/^anon_[a-f0-9]{16}$/),
-      }));
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          patient_id: expect.stringMatching(/^anon_[a-f0-9]{16}$/),
+        })
+      );
     });
   });
 
@@ -151,10 +155,18 @@ describe('LogService', () => {
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(5);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(5);
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledTimes(4);
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.severity = :severity', { severity: LogSeverity.ERROR });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.source = :source', { source: 'test-service' });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.timestamp >= :after', { after: options.after });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.timestamp <= :before', { before: options.before });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.severity = :severity', {
+        severity: LogSeverity.ERROR,
+      });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.source = :source', {
+        source: 'test-service',
+      });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.timestamp >= :after', {
+        after: options.after,
+      });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('log.timestamp <= :before', {
+        before: options.before,
+      });
     });
   });
 
@@ -245,4 +257,4 @@ describe('LogService', () => {
       });
     });
   });
-}); 
+});

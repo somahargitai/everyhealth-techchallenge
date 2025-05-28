@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import { IsString, IsEnum, IsOptional, IsObject, IsUUID } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsObject, IsUUID, IsNotEmpty } from 'class-validator';
 
 export enum LogSeverity {
   INFO = 'info',
@@ -13,27 +13,30 @@ export class Log {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   timestamp!: Date;
 
   @Column()
   @IsString()
+  @IsNotEmpty()
   source!: string;
 
-  @Column()
+  @Column('varchar')
   @IsEnum(LogSeverity)
+  @IsNotEmpty()
   severity!: LogSeverity;
 
   @Column('text')
   @IsString()
+  @IsNotEmpty()
   message!: string;
 
   @Column({ nullable: true })
-  @IsOptional()
   @IsUUID()
+  @IsOptional()
   patient_id?: string;
 
-  @Column('simple-json', { nullable: true })
+  @Column('json', { nullable: true })
   @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;

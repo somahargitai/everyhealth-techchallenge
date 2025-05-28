@@ -3,6 +3,7 @@ import { LogService } from '../services/LogService';
 import { Log, LogSeverity } from '../models/Log';
 import { logger } from '../config/logger';
 import { validate as isUUID } from 'uuid';
+import { QueryFailedError, ConnectionIsNotSetError } from 'typeorm';
 
 export class LogController {
   private logService: LogService;
@@ -17,11 +18,19 @@ export class LogController {
       res.status(201).json(log);
     } catch (error) {
       logger.error('Failed to create log:', { error });
-      res.status(400).json({
-        status: 'error',
-        message: 'Failed to create log',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
+      if (error instanceof QueryFailedError || error instanceof ConnectionIsNotSetError) {
+        res.status(500).json({
+          status: 'error',
+          message: 'Database error occurred',
+          details: error.message,
+        });
+      } else {
+        res.status(400).json({
+          status: 'error',
+          message: 'Failed to create log',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
     }
   }
 
@@ -46,11 +55,19 @@ export class LogController {
       });
     } catch (error) {
       logger.error('Failed to fetch logs:', { error });
-      res.status(400).json({
-        status: 'error',
-        message: 'Failed to fetch logs',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
+      if (error instanceof QueryFailedError || error instanceof ConnectionIsNotSetError) {
+        res.status(500).json({
+          status: 'error',
+          message: 'Database error occurred',
+          details: error.message,
+        });
+      } else {
+        res.status(400).json({
+          status: 'error',
+          message: 'Failed to fetch logs',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
     }
   }
 
@@ -65,11 +82,19 @@ export class LogController {
       res.json(stats);
     } catch (error) {
       logger.error('Failed to fetch stats:', { error });
-      res.status(400).json({
-        status: 'error',
-        message: 'Failed to fetch stats',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
+      if (error instanceof QueryFailedError || error instanceof ConnectionIsNotSetError) {
+        res.status(500).json({
+          status: 'error',
+          message: 'Database error occurred',
+          details: error.message,
+        });
+      } else {
+        res.status(400).json({
+          status: 'error',
+          message: 'Failed to fetch stats',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
     }
   }
 
@@ -112,11 +137,19 @@ export class LogController {
       res.json(log);
     } catch (error) {
       logger.error('Failed to fetch log:', { error });
-      res.status(400).json({
-        status: 'error',
-        message: 'Failed to fetch log',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
+      if (error instanceof QueryFailedError || error instanceof ConnectionIsNotSetError) {
+        res.status(500).json({
+          status: 'error',
+          message: 'Database error occurred',
+          details: error.message,
+        });
+      } else {
+        res.status(400).json({
+          status: 'error',
+          message: 'Failed to fetch log',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
     }
   }
 }

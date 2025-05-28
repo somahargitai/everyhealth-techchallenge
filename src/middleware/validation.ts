@@ -5,6 +5,11 @@ import { Log, LogSeverity } from '../models/Log';
 
 export const validateLog = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // Remove timestamp from request body if provided by client
+    if (req.body.timestamp) {
+      delete req.body.timestamp;
+    }
+
     const logDto = plainToInstance(Log, req.body);
     const errors = await validate(logDto);
 

@@ -13,9 +13,8 @@ describe('Log Endpoints', () => {
     it('should create a new log entry', async () => {
       const logData = {
         source: 'test-service',
-        severity: 'info',
+        severity: LogSeverity.INFO,
         message: 'Test log message',
-        metadata: { test: true },
       };
 
       const response = await request(app).post('/logs').send(logData).expect(201);
@@ -24,12 +23,14 @@ describe('Log Endpoints', () => {
       expect(response.body.source).toBe(logData.source);
       expect(response.body.severity).toBe(logData.severity);
       expect(response.body.message).toBe(logData.message);
+      expect(response.body.timestamp).toBeDefined();
+      expect(new Date(response.body.timestamp)).toBeInstanceOf(Date);
     });
 
     it('should create a log with patient_id', async () => {
       const logData = {
         source: 'test-service',
-        severity: 'info',
+        severity: LogSeverity.INFO,
         message: 'Test log message',
         patient_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
       };
@@ -41,33 +42,50 @@ describe('Log Endpoints', () => {
     });
 
     it('should return 400 for invalid log data', async () => {
-      const invalidLogData = {
-        source: 'test-service',
-        // Missing required fields
+      const invalidLog = {
+        source: '',
+        severity: 'invalid-severity',
+        message: '',
       };
 
-      await request(app).post('/logs').send(invalidLogData).expect(400);
+      await request(app).post('/logs').send(invalidLog).expect(400);
     });
 
     it('should return 400 for invalid severity', async () => {
-      const invalidLogData = {
+      const invalidLog = {
         source: 'test-service',
         severity: 'invalid-severity',
         message: 'Test message',
       };
 
-      await request(app).post('/logs').send(invalidLogData).expect(400);
+      await request(app).post('/logs').send(invalidLog).expect(400);
     });
 
     it('should return 400 for invalid patient_id format', async () => {
-      const invalidLogData = {
+      const invalidLog = {
         source: 'test-service',
-        severity: 'info',
+        severity: LogSeverity.INFO,
         message: 'Test message',
         patient_id: 'invalid-uuid',
       };
 
-      await request(app).post('/logs').send(invalidLogData).expect(400);
+      await request(app).post('/logs').send(invalidLog).expect(400);
+    });
+
+    it('should ignore client-provided timestamp', async () => {
+      const logData = {
+        source: 'test-service',
+        severity: LogSeverity.INFO,
+        message: 'Test log message',
+        timestamp: '2025-03-01T14:25:43Z', // This should be ignored
+      };
+
+      const response = await request(app).post('/logs').send(logData).expect(201);
+
+      expect(response.body).toBeValidLog();
+      expect(response.body.timestamp).toBeDefined();
+      expect(new Date(response.body.timestamp)).toBeInstanceOf(Date);
+      expect(response.body.timestamp).not.toBe(logData.timestamp);
     });
   });
 
@@ -295,6 +313,18 @@ describe('Log Endpoints', () => {
 
       expect(emptyPageResponse.body.logs).toHaveLength(0);
       expect(emptyPageResponse.body.total).toBe(totalLogs);
+    });
+
+    it('should return 500 if the database connection is lost', async () => {
+      // Destroy the database connection to simulate a DB error
+      if (AppDataSource.isInitialized) {
+        await AppDataSource.destroy();
+      }
+      await request(app).get('/logs').expect(500);
+      // Re-initialize for other tests
+      if (!AppDataSource.isInitialized) {
+        await AppDataSource.initialize();
+      }
     });
   });
 

@@ -1,3 +1,5 @@
+ <img src="../images/everyhealth-considerations.svg" alt="Every Health Logo" width="300"/>
+
 # Design Reflection Document
 
 ## 1. Design Choices and Trade-offs

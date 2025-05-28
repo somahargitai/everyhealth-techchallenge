@@ -6,7 +6,10 @@ A log management system for Every Health's digital clinic.
 
 Documents:
 
-- [Design Reflection Document](./DesignReflectionDocument.md) - Design choices, production considerations, and future plans
+- [Design Reflection Document](./docs/DesignReflectionDocument.md) - Design choices, production considerations, and future plans
+- [Definition of Done Checklist](./docs/DODChecklist.md) - Task list to complete
+- [Implementation Plan](./docs/ImplementationPlan.md) - Initial plan I used to organize my ideas
+- [Task Definition](./docs/TaskDefinition.md) - Original document of expectations
 
 ## Prerequisites
 
@@ -61,6 +64,7 @@ npm start
   - Query params: after
 
 For detailed API documentation with examples, visit the Swagger UI at:
+
 ```bash
 http://localhost:3000/api-docs
 ```
@@ -96,35 +100,35 @@ npm run test:coverage
 
 ```bash
 src/
-  ├── __tests__/           # Test files
-  │   ├── controllers/     # Controller tests
-  │   ├── middleware/      # Middleware tests
-  │   ├── utils/          # Utility tests
-  │   └── log.test.ts     # API integration tests
+  ├── __tests__/            # Test files
+  │   ├── controllers/      # Controller tests
+  │   ├── middleware/       # Middleware tests
+  │   ├── utils/            # Utility tests
+  │   └── log.test.ts       # API integration tests
   │
-  ├── config/             # Configuration files
-  │   ├── database.ts     # Database configuration
-  │   ├── logger.ts       # Logging configuration
-  │   └── swagger.ts      # API documentation
+  ├── config/               # Configuration files
+  │   ├── database.ts       # Database configuration
+  │   ├── logger.ts         # Logging configuration
+  │   └── swagger.ts        # API documentation
   │
-  ├── controllers/        # Route controllers
+  ├── controllers/          # Route controllers
   │   └── LogController.ts
   │
-  ├── middleware/         # Express middleware
-  │   └── validation.ts   # Request validation
+  ├── middleware/           # Express middleware
+  │   └── validation.ts     # Request validation
   │
-  ├── models/            # Data models
-  │   └── Log.ts         # Log entity
+  ├── models/               # Data models
+  │   └── Log.ts            # Log entity
   │
-  ├── routes/            # API routes
-  │   └── logRoutes.ts   # Log endpoints
+  ├── routes/               # API routes
+  │   └── logRoutes.ts      # Log endpoints
   │
-  ├── services/          # Business logic
-  │   └── LogService.ts  # Log operations
+  ├── services/             # Business logic
+  │   └── LogService.ts     # Log operations
   │
-  ├── utils/             # Utility functions
-  │   └── anonymization.ts # Patient ID anonymization
+  ├── utils/                # Utility functions
+  │   └── anonymization.ts  # Patient ID anonymization
   │
-  ├── app.ts             # Application entry point
-  └── server.ts          # Server configuration
+  ├── app.ts                # Application entry point
+  └── server.ts             # Server configuration
 ```
